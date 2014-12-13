@@ -1,35 +1,16 @@
 ---
 
-- set_fact:
-    checkinstall_package: checkinstall-{{checkinstall_version}}-1.{{ansible_architecture}}.rpm
-    checkinstall_disthome: /root/rpmbuild/RPMS/{{ansible_architecture}}
+- include: apt.yml
+  when: ansible_pkg_mgr == 'apt'
 
-- name: install SELinux Python bindings required by Ansible "copy" module
-  yum: name=libselinux-python
-  sudo: yes
+- include: centos6.yml
+  when: ansible_pkg_mgr == 'yum' and
+        ansible_distribution == 'CentOS' and
+        ansible_distribution_version|int == 6
 
-- name: copy pre-built Checkinstall package
-  copy: src={{checkinstall_package}}
-        dest={{checkinstall_disthome}}/
-        owner=root group=root mode=0644
-  sudo: yes
-
-- name: install rpm handlers
-  yum: name={{item}}
-  with_items: [ rpm-build, rpmdevtools ]
-  sudo: yes
-
-- name: create rpm source trees
-  command: rpmdev-setuptree
-  args:
-    creates: /root/rpmbuild
-  sudo: yes
-
-- name: install Checkinstall
-  yum: name={{checkinstall_disthome}}/{{checkinstall_package}}
-  sudo: yes
-
-- name: test Checkinstall
+- name: test checkinstall command
   shell: checkinstall --version
   sudo: yes
+  register: result
   changed_when: False
+  failed_when: ('checkinstall ' + checkinstall_version) not in result.stdout

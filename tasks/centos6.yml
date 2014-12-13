@@ -1,0 +1,33 @@
+---
+
+- set_fact:
+    checkinstall_package: checkinstall-{{checkinstall_version}}-1.{{ansible_architecture}}.rpm
+    when: checkinstall_package not defined
+- set_fact:
+    checkinstall_disthome: /root/rpmbuild/RPMS/{{ansible_architecture}}
+    when: checkinstall_disthome not defined
+
+- name: install SELinux Python bindings required by Ansible "copy" module
+  yum: name=libselinux-python
+  sudo: yes
+
+- name: copy pre-built checkinstall package
+  copy: src=centos6/{{checkinstall_package}}
+        dest={{checkinstall_disthome}}/
+        owner=root group=root mode=0644
+  sudo: yes
+
+- name: install RPM handlers
+  yum: name={{item}}
+  with_items: [ rpm-build, rpmdevtools ]
+  sudo: yes
+
+- name: create RPM source trees
+  command: rpmdev-setuptree
+  args:
+    creates: /root/rpmbuild
+  sudo: yes
+
+- name: install checkinstall package for CentOS
+  yum: name={{checkinstall_disthome}}/{{checkinstall_package}}
+  sudo: yes

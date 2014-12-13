@@ -6,7 +6,13 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "chef/centos-6.5"
+  config.vm.define "centos-6.5", autostart: false do |config|
+    config.vm.box = "chef/centos-6.5"
+  end
+
+  config.vm.define "debian-7.6", autostart: false do |config|
+    config.vm.box = "chef/debian-7.6"
+  end
   
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
@@ -16,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "vagrant.yml"
+    ansible.playbook = "test.yml"
     ansible.extra_vars = { ansible_ssh_user: "vagrant" }
   end
 

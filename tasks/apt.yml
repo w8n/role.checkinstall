@@ -1,0 +1,5 @@
+---
+
+- name: install checkinstall package for Debian/Ubuntu
+  apt: name=checkinstall
+  sudo: yes
