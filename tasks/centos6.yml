@@ -12,7 +12,7 @@
   sudo: yes
 
 - name: copy pre-built checkinstall package
-  copy: src=centos6/{{checkinstall_package}}
+  copy: src=el6/{{checkinstall_package}}
         dest={{checkinstall_disthome}}/
         owner=root group=root mode=0644
   sudo: yes
