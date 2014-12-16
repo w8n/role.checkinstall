@@ -3,7 +3,7 @@
 - include: apt.yml
   when: ansible_pkg_mgr == 'apt'
 
-- include: centos6.yml
+- include: el6.yml
   when: ansible_pkg_mgr == 'yum' and
         ansible_distribution == 'CentOS' and
         ansible_distribution_version|int == 6
