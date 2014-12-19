@@ -1,5 +1,9 @@
 ---
 
+- name: update package list
+  command: apt-get update
+  sudo: yes
+
 - name: install checkinstall package for Debian/Ubuntu
   apt: name=checkinstall
   sudo: yes
